@@ -1,0 +1,123 @@
+# Contributor: Francisco Guerreiro <francisg@fnop.net>
+# Contributor: Łukasz Jendrysik <scadu@yandex.com>
+# Contributor: Cameron Banta <cbanta@gmail.com>
+# Contributor: Ashley Sommer <ashleysommer@gmail.com>
+# Maintainer: Cameron Banta <cbanta@gmail.com>
+pkgname=rsyslog
+pkgver=8.32.0
+pkgrel=0
+pkgdesc="Enhanced multi-threaded syslogd with database support and more."
+url="http://www.rsyslog.com/"
+arch="all"
+license="GPL-3.0 LGPL-3.0"
+options="!check"
+makedepends="zlib-dev gnutls-dev mariadb-dev postgresql-dev net-snmp-dev
+	libnet-dev libgcrypt-dev libee-dev libestr-dev liblogging-dev
+	libfastjson-dev util-linux-dev py-docutils hiredis-dev linux-headers
+	curl-dev"
+subpackages="$pkgname-doc $pkgname-mysql $pkgname-pgsql $pkgname-tls
+	$pkgname-snmp $pkgname-hiredis $pkgname-dbg $pkgname-elasticsearch"
+source="http://build.rsyslog.com/download/$pkgname-$pkgver.tar.gz
+	$pkgname.initd
+	$pkgname.confd
+	$pkgname.logrotate
+	$pkgname.conf
+	musl-fix.patch
+	queue.patch
+	"
+builddir="$srcdir/$pkgname-$pkgver"
+
+build() {
+	cd "$builddir"
+
+	./configure \
+		--build=$CBUILD \
+		--host=$CHOST \
+		--disable-rfc3195 \
+		--enable-largefile \
+		--enable-imdiag \
+		--enable-imfile \
+		--enable-mail \
+		--enable-omprog \
+		--enable-elasticsearch \
+		--enable-omstdout \
+		--enable-omudpspoof \
+		--enable-imptcp \
+		--enable-impstats \
+		--enable-mysql \
+		--enable-pgsql \
+		--enable-gnutls \
+		--enable-snmp \
+		--enable-omhiredis \
+		--prefix=/usr \
+		--sysconfdir=/etc \
+		--mandir=/usr/share/man
+	make
+}
+
+package() {
+	cd "$builddir"
+
+	make DESTDIR="$pkgdir" install
+
+	install -m755 -D "$srcdir"/$pkgname.initd "$pkgdir"/etc/init.d/$pkgname
+	install -m644 -D "$srcdir"/$pkgname.confd "$pkgdir"/etc/conf.d/$pkgname
+	install -m644 -D "$srcdir"/$pkgname.logrotate "$pkgdir"/etc/logrotate.d/$pkgname
+	install -m644 -D "$srcdir"/$pkgname.conf "$pkgdir"/etc/$pkgname.conf
+}
+
+mysql() {
+	pkgdesc="rsyslog mysql support"
+
+	mkdir -p "$subpkgdir"/usr/lib/rsyslog/
+	mv "$pkgdir"/usr/lib/rsyslog/ommysql.so \
+		"$subpkgdir"/usr/lib/rsyslog/
+}
+
+hiredis(){
+	pkgdesc="rsyslog hiredis support"
+
+	mkdir -p "$subpkgdir"/usr/lib/rsyslog/
+	mv "$pkgdir"/usr/lib/rsyslog/omhiredis.so \
+		"$subpkgdir"/usr/lib/rsyslog/
+}
+
+pgsql() {
+	pkgdesc="rsyslog pgsql support"
+
+	mkdir -p "$subpkgdir"/usr/lib/rsyslog/
+	mv "$pkgdir"/usr/lib/rsyslog/ompgsql.so \
+		"$subpkgdir"/usr/lib/rsyslog/
+}
+
+elasticsearch() {
+        pkgdesc="rsyslog elasticsearch support"
+
+        mkdir -p "$subpkgdir"/usr/lib/rsyslog/
+        mv "$pkgdir"/usr/lib/rsyslog/omelasticsearch.so \
+                "$subpkgdir"/usr/lib/rsyslog/
+}
+
+tls() {
+	pkgdesc="rsyslog tls support"
+
+	mkdir -p "$subpkgdir"/usr/lib/rsyslog/
+	mv "$pkgdir"/usr/lib/rsyslog/lmnsd_gtls.so \
+		"$subpkgdir"/usr/lib/rsyslog/
+}
+
+snmp() {
+	pkgdesc="rsyslog snmp support"
+
+	mkdir -p "$subpkgdir"/usr/lib/rsyslog/
+	mv "$pkgdir"/usr/lib/rsyslog/omsnmp.so \
+		"$subpkgdir"/usr/lib/rsyslog/
+}
+
+sha512sums="eea85d77bf3624fbad6f0838fa2a4af7c14d853c8f120f14cf697cdfda7f7e0692dab684d2ddd07fe44a0bcd50cf91baf69af1bb63dc9d60e19146f1150155ac  rsyslog-8.32.0.tar.gz
+9a4b184076a82e0899da79ab3749e1c67eac03f36c4460d34ed0385f4a3ffad53681a1cc25dd514e835c9399a9abd01c235743535ad549d5be7f66d9e127b9dc  rsyslog.initd
+a4d969671800227129be870b0318961b79d16365663754111a136734bbf7005abd4da24853dfdc07b3b6691ab5a7b215f0ac6c19022b4c5c8dab06165a42431b  rsyslog.confd
+d54377ddf39197656811a84272568ea761f984e19dd04fc54f372dd04a9244e66d02b26ab33073d0344d054f031660ec611f3c7a18c266e7b68cef5e2c47f06f  rsyslog.logrotate
+3bcd58b222eb7f4d8a42a0643cacb6ab44790f90c9bd550678e002bc19863d5d6a7341e5e5ba0b9292f85c6c04cd5cc42d174acdc63e8ba22022620db10f2b9b  rsyslog.conf
+bd469f3126d9db65cbe6b48a0e6da3ae1a6ef0194b7132799b4fdfcfc50de750691f44de21905fe40c047b7281d3db64b74a473383dd07077c81170daaf3ec6b  musl-fix.patch
+7be105f9a30d23b48ee46e19d31ba37ec30477935a9f7ba3929666a9abe175313dbb7caf55fbb1c6579dd5d25fe037eea84cae9065fe3f765f23569344bce5d7  queue.patch"

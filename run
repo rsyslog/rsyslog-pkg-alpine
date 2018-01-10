@@ -1,0 +1,7 @@
+sudo docker run \
+	-e RSA_PRIVATE_KEY="$(cat ~/.abuild/rgerhards@adiscon.com-5a54927f.rsa)" \
+	-e RSA_PRIVATE_KEY_NAME="rgerhards@adiscon.com-5a54927f.rsa" \
+	-v "$PWD:/home/builder/package" \
+	-v "$HOME/.abuild/packages:/packages" \
+	-v "$HOME/.abuild/rgerhards@adiscon.com-5a54927f.rsa.pub:/etc/apk/keys/rgerhards@adiscon.com-5a54927f.rsa.pub" \
+	rgerhards/docker-alpine-abuild
