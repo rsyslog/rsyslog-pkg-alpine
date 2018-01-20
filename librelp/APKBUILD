@@ -1,0 +1,36 @@
+# Contributor: Rainer Gerhards <rgerhards@adiscon.com>
+# Maintainer: Rainer Gerhards <rgerhards@adiscon.com>
+pkgname=librelp
+pkgver=1.2.14
+pkgrel=0
+pkgdesc="RELP logging protocol implementation"
+url="http://www.librelp.com/"
+arch="all"
+license="GPL-3.0"
+options="!check"
+makedepends="autoconf automake libtool gnutls-dev"
+subpackages="$pkgname-dev $pkgname-dbg"
+#source="${pkgname}-${pkgver}.tar.gz::https://github.com/rsyslog/$pkgname/archive/v$pkgver.tar.gz
+#        "
+source="http://download.rsyslog.com/$pkgname/$pkgname-$pkgver.tar.gz"
+
+_builddir="$srcdir"/$pkgname-$pkgver
+
+build() {
+        cd "$_builddir"
+        ./configure \
+		--build=$CBUILD \
+		--host=$CHOST \
+		--prefix=/usr \
+		--sysconfdir=/etc \
+		--mandir=/usr/share/man \
+		|| return 1
+	make || return 1
+}
+
+package() {
+	cd "$_builddir"
+	make DESTDIR="$pkgdir" install || return 1
+}
+
+sha512sums="b9a947edb7f23ba533f358d3271a61e80fcca7db8be0c20b39ec61ce4d913efed25173330a0604faebfbbdf33a051ed43234b2b41be2480dc3459c35b91acaae  librelp-1.2.14.tar.gz"
