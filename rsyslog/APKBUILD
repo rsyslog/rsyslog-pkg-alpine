@@ -14,11 +14,11 @@ options="!check"
 makedepends="zlib-dev gnutls-dev mariadb-dev postgresql-dev net-snmp-dev
 	libnet-dev libgcrypt-dev libestr-dev liblogging-dev
 	libfastjson-dev util-linux-dev py-docutils hiredis-dev linux-headers
-	curl-dev librelp-dev"
+	curl-dev librelp-dev czmq-dev"
 subpackages="$pkgname-doc $pkgname-mysql $pkgname-pgsql $pkgname-tls
 	$pkgname-snmp $pkgname-hiredis $pkgname-dbg $pkgname-elasticsearch
 	$pkgname-mmutf8fix $pkgname-imptcp $pkgname-mmjsonparse $pkgname-omstdout
-	$pkgname-imrelp $pkgname-omrelp "
+	$pkgname-imrelp $pkgname-omrelp $pkgname-omczmq $pkgname-imczmq"
 source="http://build.rsyslog.com/download/daily/$pkgname-$pkgver.tar.gz
 	$pkgname.initd
 	$pkgname.confd
@@ -56,6 +56,8 @@ build() {
 		--enable-omstdout \
 		--enable-imptcp \
 		--enable-relp \
+		--enable-omczmq \
+		--enable-imczmq \
 		--prefix=/usr \
 		--sysconfdir=/etc \
 		--mandir=/usr/share/man
@@ -71,6 +73,23 @@ package() {
 	install -m644 -D "$srcdir"/$pkgname.confd "$pkgdir"/etc/conf.d/$pkgname
 	install -m644 -D "$srcdir"/$pkgname.logrotate "$pkgdir"/etc/logrotate.d/$pkgname
 	install -m644 -D "$srcdir"/$pkgname.conf "$pkgdir"/etc/$pkgname.conf
+}
+
+imczmq() {
+	pkgdesc="rsyslog imczmq module"
+
+	mkdir -p "$subpkgdir"/usr/lib/rsyslog/
+	mv "$pkgdir"/usr/lib/rsyslog/imczmq.so \
+		"$subpkgdir"/usr/lib/rsyslog/
+}
+
+omczmq() {
+	pkgdesc="rsyslog omczmq module"
+
+	mkdir -p "$subpkgdir"/usr/lib/rsyslog/
+	ls -l "$pkgdir"/usr/lib/rsyslog/
+	mv "$pkgdir"/usr/lib/rsyslog/omczmq.so \
+		"$subpkgdir"/usr/lib/rsyslog/
 }
 
 omrelp() {
