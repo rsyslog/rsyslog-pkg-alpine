@@ -1,0 +1,13 @@
+sudo: required
+language: minimal
+services: docker
+
+script:
+  - mkdir ~/.abuild
+    && mkdir ~/.abuild/packages
+    && mv ci/dot-abuild-template/* ~/.abuild
+    && export RSA_PRIVATE_KEY="$(cat ~/.abuild/ci-only-do-not-use@example.com-5a6d97d5.rsa)"
+    && export RSA_PRIVATE_KEY_NAME="ci-only-do-not-use@example.com-5a6d97d5.rsa"
+    && export SUDO=sudo
+  - ./build.sh 3.7
+    && ./build.sh daily
