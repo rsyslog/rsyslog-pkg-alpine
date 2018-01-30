@@ -11,5 +11,5 @@ script:
     && export SUDO=sudo
     && ./build.sh 3.7
     && sudo rm -rf ~/.abuild/packages/*
-    && (cd daily/rsyslog ; sudo  ./build-daily-tarball ; source ../../run)
-    && find ~/.abuild/packages
+    && (cd daily/rsyslog  && ./build-daily-tarball && source ../../run)
+    && find ~/.abuild/packages | xargs ls -l
