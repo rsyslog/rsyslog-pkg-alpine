@@ -9,5 +9,7 @@ script:
     && export RSA_PRIVATE_KEY="$(cat ~/.abuild/ci-only-do-not-use@example.com-5a6d97d5.rsa)"
     && export RSA_PRIVATE_KEY_NAME="ci-only-do-not-use@example.com-5a6d97d5.rsa"
     && export SUDO=sudo
-  - ./build.sh 3.7
-    && ./build.sh daily
+    && ./build.sh 3.7
+    && sudo rm -rf ~/.abuild/packages/*
+    && (cd daily/rsyslog  && ./build-daily-tarball && source ../../run)
+    && find ~/.abuild/packages | xargs ls -l

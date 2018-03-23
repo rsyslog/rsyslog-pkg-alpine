@@ -1,0 +1,27 @@
+rm -f *.tar.gz
+PREV_PWD=$PWD
+rm -rf /tmp/daily-tarball #&> /dev/null
+mkdir /tmp/daily-tarball
+cd /tmp/daily-tarball
+git clone https://github.com/rsyslog/rsyslog.git
+cd rsyslog
+CURR_VER="_pre`date  +%Y%m%d%H%M`"
+sed s/\\.0\\.master\]/$CURR_VER\]/ < configure.ac > configure.ac.new
+mv configure.ac.new configure.ac
+export RSYSLOG_HOME=`pwd`
+DO_IN_CONTAINER="$RSYSLOG_HOME/devtools/devcontainer.sh"
+
+$DO_IN_CONTAINER autoreconf -fiv
+$DO_IN_CONTAINER ./configure
+$DO_IN_CONTAINER make dist
+cp rsyslog-*.tar.gz $PREV_PWD
+
+cd $PREV_PWD
+rm -rf /tmp/daily-tarball #&> /dev/null
+
+set -x
+sed s/rsyslog-pkgver/$CURR_VER/ < APKBUILD.template > APKBUILD.new
+mv APKBUILD.new APKBUILD
+TARBALL=`ls *.tar.gz`
+sed "s/rsyslog-sha512sum/`sha512sum $TARBALL`/" < APKBUILD > APKBUILD.new
+mv APKBUILD.new APKBUILD

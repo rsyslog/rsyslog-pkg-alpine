@@ -10,6 +10,8 @@ fi
 echo PWD: $PWD
 echo HOME: $HOME
 docker run \
+	-e OWNER=`id -u` \
+	-e OWNER_GRP=`id -g` \
 	-e RSA_PRIVATE_KEY \
 	-e RSA_PRIVATE_KEY_NAME \
 	-v "$PWD:/home/builder/package" \

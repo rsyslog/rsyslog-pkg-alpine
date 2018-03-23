@@ -5,7 +5,7 @@
 # Contributor: Rainer Gerhards <rgerhards@adiscon.com>
 # Maintainer: Cameron Banta <cbanta@gmail.com>
 pkgname=rsyslog
-pkgver=8.33.0
+pkgver=8.33rsyslog-pkgver
 pkgrel=0
 pkgdesc="Enhanced multi-threaded syslogd with database support and more."
 url="http://www.rsyslog.com/"
@@ -22,7 +22,8 @@ subpackages="$pkgname-doc $pkgname-mysql $pkgname-pgsql $pkgname-tls
 	$pkgname-imrelp $pkgname-omrelp $pkgname-omczmq $pkgname-imczmq
 	$pkgname-mmanon $pkgname-omhttpfs "
 #	$pkgname-mmanon $pkgname-omhttpfs $pkgname-omkafka $pkgname-imkafka"
-source="http://build.rsyslog.com/download/daily/$pkgname-$pkgver.tar.gz
+#source="http://build.rsyslog.com/download/daily/$pkgname-$pkgver.tar.gz
+source="$pkgname-$pkgver.tar.gz
 	$pkgname.initd
 	$pkgname.confd
 	$pkgname.logrotate
@@ -227,7 +228,7 @@ snmp() {
 		"$subpkgdir"/usr/lib/rsyslog/
 }
 
-sha512sums="b0fd0c5976325bee9b29534c6f6dfad2f70d22e2fc4a7d5f28563116b7360290c7e31aa77ee5ecdf25e726b45d03899b00e4d653d0954284b88e8be918e0f333  rsyslog-8.33.0.tar.gz
+sha512sums="rsyslog-sha512sum
 9a4b184076a82e0899da79ab3749e1c67eac03f36c4460d34ed0385f4a3ffad53681a1cc25dd514e835c9399a9abd01c235743535ad549d5be7f66d9e127b9dc  rsyslog.initd
 a4d969671800227129be870b0318961b79d16365663754111a136734bbf7005abd4da24853dfdc07b3b6691ab5a7b215f0ac6c19022b4c5c8dab06165a42431b  rsyslog.confd
 d54377ddf39197656811a84272568ea761f984e19dd04fc54f372dd04a9244e66d02b26ab33073d0344d054f031660ec611f3c7a18c266e7b68cef5e2c47f06f  rsyslog.logrotate
